@@ -47,13 +47,13 @@
     "engineFolder": "electric-city",
     "effectsFolder": "electric-city",
     "effects": {
-      "bell": "effects/stop(17~).wav",
-      "frontOpen": "effects/FDoorO_14~.wav",
-      "frontClose": "effects/FDoorC_14~.wav",
-      "rearOpen": "effects/bdoorOpen.wav",
-      "rearClose": "effects/bdoorClose.wav",
-      "parkingOn": "effects/SD_kippschalter_ein.wav",
-      "parkingOff": "effects/SD_kippschalter_aus.wav"
+      "bell": "effects/bell/stop(17~).wav",
+      "frontOpen": "effects/front-open/FDoorO_14~.wav",
+      "frontClose": "effects/front-close/FDoorC_14~.wav",
+      "rearOpen": "effects/rear-open/bdoorOpen.wav",
+      "rearClose": "effects/rear-close/bdoorClose.wav",
+      "parkingOn": "effects/parking/SD80_feststellbremse_ein.wav",
+      "parkingOff": "effects/parking/SD80_feststellbremse_aus.wav"
     }
   }
 }

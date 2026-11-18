@@ -23,13 +23,12 @@
       ]
     },
     'electric-speed': {
-      base: 'motor/', mode: 'speed',
+      base: 'E2/', mode: 'speed',
+      // sound_E2.cfg 기준: Velocity 볼륨 곡선 및 loopsound 기준 속도/기본 음량
       samples: [
-        // E2 속도별 모터음: 저속 5km/h에서 10km/h로 자연스럽게 넘기고 이후 40/60 구간으로 연결
-        { file: '5kmh.wav', refSpeed: 5, optional: true, speedPoints: [[0,0],[3,.15],[5,.3],[7,.7],[10,0]] },
-        { file: '10kmh.wav', refSpeed: 10, level: 1, speedPoints: [[5,0],[7,.7],[10,1],[25,1],[30,.65],[40,0]] },
-        { file: '40kmh.wav', refSpeed: 40, speedPoints: [[25,0],[30,.3],[40,.7],[55,1],[70,.7],[80,0]] },
-        { file: '60kmh.wav', refSpeed: 60, speedPoints: [[45,0],[55,.35],[60,.7],[70,1],[90,.8]] }
+        { file: '10kmh.wav', refSpeed: 30, level: 0.5, speedPoints: [[0,0],[5,0.3],[7,0.7],[40,1],[80,0.2]] },
+        { file: '40kmh.wav', refSpeed: 37.5, level: 0.4, speedPoints: [[0,0],[30,0.3],[70,1]] },
+        { file: '60kmh.wav', refSpeed: 42, level: 0.3, speedPoints: [[30,0],[80,1]] }
       ]
     }
   };
@@ -116,15 +115,13 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      // 가속 페달로 모터 부하가 걸릴 때만 소리 출력. 브레이크 입력은 모터음에 영향을 주지 않는다.
+      // CFG의 Velocity 곡선을 그대로 적용한다. 페달 입력으로 임의 게이팅하지 않는다.
       for(const s of active){
-        const speedWeight=curve(s.speedPoints,speed);
-        const hasLoad=t>=.02;
-        const target=hasLoad?clamp(speedWeight*.42*t*(s.level||1),0,2.0):0;
-        const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
-        const pitch=clamp(Math.pow(speedRatio,.32)*(.97+t*.08),.68,1.28);
-        s.source.playbackRate.setTargetAtTime(pitch,now,.16);
-        s.gain.gain.setTargetAtTime(target,now,hasLoad?.10:.035);
+        const velocityWeight=curve(s.speedPoints,speed);
+        const target=clamp(velocityWeight*(s.level||1),0,1.5);
+        const pitch=clamp(speed/(s.refSpeed||40),.01,1.8);
+        s.source.playbackRate.setTargetAtTime(pitch,now,.22);
+        s.gain.gain.setTargetAtTime(target,now,.18);
       }
       return;
     }

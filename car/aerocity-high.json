@@ -60,7 +60,7 @@
     "engine": "q290-euro6",
     "folder": "aerocity-high",
     "effects": {
-      "bell": "effects/bell/stop.wav",
+      "bell": "effects/bell/stop(17~).wav",
       "frontOpen": "effects/front-open/FDoorO_14~.wav",
       "frontClose": "effects/front-close/FDoorC_14~.wav",
       "rearOpen": "effects/rear-open/D92_bdoor_opn.wav",
@@ -71,6 +71,7 @@
     },
     "redzone": {
       "threshold": 0.88
-    }
+    },
+    "effectsFolder": "aerocity-high"
   }
 }
