@@ -25,11 +25,11 @@
     'electric-speed': {
       base: 'motor/', mode: 'speed',
       samples: [
-        // 5kmh.wav가 추가되면 자동으로 저속 구간에 사용한다. 파일이 아직 없으면 조용히 건너뛴다.
-        { file: '5kmh.wav', refSpeed: 5, optional: true, speedPoints: [[0,0],[1,.35],[5,1],[8,.5],[10,0]] },
-        { file: '10kmh.wav', refSpeed: 10, level: 4.2, speedPoints: [[5,0],[10,1],[25,1],[30,.5],[40,0]] },
-        { file: '40kmh.wav', refSpeed: 40, speedPoints: [[30,0],[40,1],[60,0]] },
-        { file: '60kmh.wav', refSpeed: 60, speedPoints: [[40,0],[60,1]] }
+        // E2 속도별 모터음: 저속 5km/h에서 10km/h로 자연스럽게 넘기고 이후 40/60 구간으로 연결
+        { file: '5kmh.wav', refSpeed: 5, optional: true, speedPoints: [[0,0],[3,.15],[5,.3],[7,.7],[10,0]] },
+        { file: '10kmh.wav', refSpeed: 10, level: 1, speedPoints: [[5,0],[7,.7],[10,1],[25,1],[30,.65],[40,0]] },
+        { file: '40kmh.wav', refSpeed: 40, speedPoints: [[25,0],[30,.3],[40,.7],[55,1],[70,.7],[80,0]] },
+        { file: '60kmh.wav', refSpeed: 60, speedPoints: [[45,0],[55,.35],[60,.7],[70,1],[90,.8]] }
       ]
     }
   };
