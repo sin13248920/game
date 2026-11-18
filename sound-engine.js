@@ -21,6 +21,14 @@
         { file: 'GE11low.22k.wav', ref: 1600, points: [[700,0],[1200,1],[1900,2],[3000,0]], throttle: .7 },
         { file: 'GE11Vmid.22k.wav', ref: 2000, points: [[700,0],[1200,0],[1900,1],[3000,1]], throttle: .5 }
       ]
+    },
+    'electric-speed': {
+      base: 'motor/', mode: 'speed',
+      samples: [
+        { file: '10kmh.wav', speedPoints: [[0,0],[1,.4],[10,1],[25,1],[30,.5],[40,0]] },
+        { file: '40kmh.wav', speedPoints: [[0,0],[30,.5],[40,1],[60,0]] },
+        { file: '60kmh.wav', speedPoints: [[0,0],[40,0],[60,1]] }
+      ]
     }
   };
   let ctx=null, master=null, active=[], profileId=null, ready=false, volume=.65, suspended=true;
@@ -41,7 +49,7 @@
   }
   async function fetchBuffer(path){const r=await fetch(path);if(!r.ok)throw new Error('음원 로드 실패: '+path+' ('+r.status+')');return ctx.decodeAudioData(await r.arrayBuffer());}
   async function loadEffects(soundConfig){
-    const folder=soundConfig && soundConfig.folder;
+    const folder=soundConfig && (soundConfig.effectsFolder || soundConfig.folder);
     const paths=soundConfig && soundConfig.effects || {};
     const taskKey=folder+'|'+JSON.stringify(paths);
     if(effectsTask && effectsTask.id===taskKey) return effectsTask.promise;
@@ -71,8 +79,9 @@
       await init();stopEngine();stopLoop('retarder',false);stopLoop('redzone',false);profileId=id;ready=false;activeSoundConfig=config;
       loadEffects(config);
       const p=PROFILES[id];
+      const soundFolder=config.engineFolder||config.folder||'';
       const results=await Promise.allSettled(p.samples.map(async s=>{
-        const buffer=await fetchBuffer('Sound/'+(config.folder||'')+'/'+p.base+encodeURIComponent(s.file));
+        const buffer=await fetchBuffer('Sound/'+soundFolder+'/'+p.base+encodeURIComponent(s.file));
         const source=ctx.createBufferSource();source.buffer=buffer;source.loop=true;
         const gain=ctx.createGain();gain.gain.value=0;source.connect(gain);gain.connect(master);source.start();return{...s,source,gain};
       }));
@@ -100,8 +109,14 @@
       try{src.stop();src.disconnect();gain.disconnect();}catch(_){}
     }
   }
-  function update(rpm,throttle,dt,redline=2600,idle=650){
+  function update(rpm,throttle,dt,redline=2600,idle=650,speedKmh=0){
     if(!ctx||!ready||suspended)return;const now=ctx.currentTime,r=Math.max(0,Number(rpm)||0),t=clamp(Number(throttle)||0,0,1);
+    const profile=PROFILES[profileId];
+    if(profile&&profile.mode==='speed'){
+      const speed=Math.abs(Number(speedKmh)||0);
+      for(const s of active){const target=clamp(curve(s.speedPoints,speed)*.42,0,.72);s.source.playbackRate.setTargetAtTime(1,now,.08);s.gain.gain.setTargetAtTime(target,now,.09);}
+      return;
+    }
     for(const s of active){const rw=Math.max(0,curve(s.points,r)),tw=s.throttle+(1-s.throttle)*t,target=clamp(rw*tw*.30,0,.72),rate=clamp(r/s.ref,.72,1.55);s.source.playbackRate.setTargetAtTime(rate,now,.08);s.gain.gain.setTargetAtTime(target,now,.09);}
     const threshold=Number(activeSoundConfig&&activeSoundConfig.redzone&&activeSoundConfig.redzone.threshold);
     const hotThreshold=Number.isFinite(threshold)?clamp(threshold,0,1):.88;

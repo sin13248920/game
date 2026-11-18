@@ -1,0 +1,62 @@
+{
+  "name": "현대 일렉시티 (2025년형)",
+  "driveType": "electric",
+  "motorPower": 240,
+  "transmission": "auto",
+  "wheelbase": 5.4,
+  "maxSteer": 35,
+  "latLimit": 3.0,
+  "seats": 27,
+  "capacity": 50,
+  "gearLimit": [
+    0,
+    90
+  ],
+  "gearRec": [
+    null,
+    [
+      0,
+      90
+    ]
+  ],
+  "reverseLimit": 8,
+  "idle": 0,
+  "redline": 1,
+  "doorTime": 1.2,
+  "gearAcc": [
+    0,
+    1.25
+  ],
+  "brake": {
+    "service": 2.0,
+    "full": 4.2,
+    "airLag": 0.2,
+    "fullLag": 0.08
+  },
+  "retarder": {
+    "decel": [
+      0,
+      0.6,
+      1.0,
+      1.4
+    ]
+  },
+  "sound": {
+    "engine": "electric-speed",
+    "folder": "aerocity-low",
+    "engineFolder": "electric-city",
+    "effectsFolder": "aerocity-low",
+    "effects": {
+      "bell": "effects/bell/stop.wav",
+      "frontOpen": "effects/front-open/D92_fdoor_opn.wav",
+      "frontClose": "effects/front-close/D92_fdoor_cls.wav",
+      "rearOpen": "effects/rear-open/D92_bdoor_opn.wav",
+      "rearClose": "effects/rear-close/D92_bdoor_cls.wav",
+      "parkingOn": "effects/parking/SD80_feststellbremse_ein.wav",
+      "parkingOff": "effects/parking/SD80_feststellbremse_aus.wav",
+      "retarderLoop": "effects/retarder/retarderfolyamat.wav",
+      "retarderOn": "effects/retarder/Retarder.wav",
+      "retarderOff": "effects/retarder/Retarder_aus.wav"
+    }
+  }
+}

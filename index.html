@@ -503,7 +503,7 @@
     c.transmission = c.transmission === 'manual' ? 'manual' : 'auto';
     c.retarder = c.retarder && Array.isArray(c.retarder.decel) && c.retarder.decel.length > 1 ? { decel: c.retarder.decel.map(Number) } : null;
     const n = c.gearLimit.length;
-    if (n < 3 || c.gearAcc.length !== n || c.gearRec.length !== n) throw new Error('gearLimit / gearAcc / gearRec 길이가 서로 달라요');
+    if (n < 2 || c.gearAcc.length !== n || c.gearRec.length !== n) throw new Error('gearLimit / gearAcc / gearRec 길이가 서로 달라요');
     c.file = file;
     return c;
   }
@@ -1624,7 +1624,7 @@
     if (engaged) rpmTarget = IDLE + (REDLINE - IDLE) * Math.min(1, Math.abs(car.v) / gm);
     else rpmTarget = IDLE + (REDLINE - IDLE) * car.thr * 0.85;
     car.rpm += (rpmTarget - car.rpm) * Math.min(1, dt * (engaged ? 10 : 6));
-    if (window.BusAudio) BusAudio.update(car.rpm, car.thr, dt, REDLINE, IDLE);
+    if (window.BusAudio) BusAudio.update(car.rpm, car.thr, dt, REDLINE, IDLE, Math.abs(car.v) * 3.6);
 
     // 조향 (자전거 모델): 속도가 높을수록 조향각을 제한, 멈춰 있으면 회전 불가
     const av = Math.abs(car.v);
@@ -1673,12 +1673,12 @@
     arrowEl.style.transform = 'rotate(0deg)';
 
     el.spd.textContent = Math.round(av * 3.6);
-    el.gear.textContent = g === -1 ? 'R' : g === 0 ? 'N' : (manual ? String(g) : 'D' + g);
-    const rf = (car.rpm - IDLE) / (REDLINE - IDLE);
+    el.gear.textContent = g === -1 ? 'R' : g === 0 ? 'N' : (VEH.driveType === 'electric' ? 'D' : manual ? String(g) : 'D' + g);
+    const rf = (car.rpm - IDLE) / Math.max(1, REDLINE - IDLE);
     el.bar.style.width = clamp(rf * 100, 2, 100) + '%';
-    el.bar.classList.toggle('hot', rf > 0.88);
-    const rec = g >= 1 ? ' · 권장 ' + VEH.gearRec[g][0] + '–' + VEH.gearRec[g][1] : '';
-    el.txt.textContent = Math.round(car.rpm / 10) * 10 + ' rpm' + rec;
+    el.bar.classList.toggle('hot', VEH.driveType !== 'electric' && rf > 0.88);
+    const rec = g >= 1 && VEH.driveType !== 'electric' ? ' · 권장 ' + VEH.gearRec[g][0] + '–' + VEH.gearRec[g][1] : '';
+    el.txt.textContent = VEH.driveType === 'electric' ? '전기 모터 · ' + (VEH.motorPower || 240) + ' kW' : Math.round(car.rpm / 10) * 10 + ' rpm' + rec;
     el.cl.classList.toggle('on', keys.clutch);
     el.lf.classList.toggle('on', doors.f.pos > 0.02);
     el.lr.classList.toggle('on', doors.r.pos > 0.02);
