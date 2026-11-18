@@ -114,17 +114,18 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      // 전기버스는 가속 또는 제동 입력이 있을 때만 모터음이 반응한다.
-      // 가속은 음정을 올리고, 제동은 회생제동 느낌으로 음정을 낮춘다.
+      // 전기버스 모터음은 가속 또는 제동 페달에 부하가 걸릴 때만 출력한다.
+      // 페달을 놓으면 빠르게 무음으로 전환하고, 속도에 따른 음정 변화는 약간 더 뚜렷하게 한다.
       const pedal=Math.max(t,b);
       for(const s of active){
         const speedWeight=curve(s.speedPoints,speed);
-        const target=pedal<.015?0:clamp(Math.max(.06,speedWeight)*.42*pedal,0,.72);
+        const hasLoad=pedal>=.02;
+        const target=hasLoad?clamp(Math.max(.06,speedWeight)*.42*pedal,0,.72):0;
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
-        const pedalPitch=1+t*.30-b*.20;
-        const pitch=clamp(Math.pow(speedRatio,.32)*pedalPitch,.68,1.32);
-        s.source.playbackRate.setTargetAtTime(pitch,now,.13);
-        s.gain.gain.setTargetAtTime(target,now,.10);
+        const pedalPitch=1+t*.32-b*.21;
+        const pitch=clamp(Math.pow(speedRatio,.36)*pedalPitch,.68,1.34);
+        s.source.playbackRate.setTargetAtTime(pitch,now,.11);
+        s.gain.gain.setTargetAtTime(target,now,hasLoad?.09:.025);
       }
       return;
     }
