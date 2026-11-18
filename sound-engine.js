@@ -25,9 +25,11 @@
     'electric-speed': {
       base: 'motor/', mode: 'speed',
       samples: [
-        { file: '10kmh.wav', refSpeed: 10, speedPoints: [[0,0],[1,.4],[10,1],[25,1],[30,.5],[40,0]] },
-        { file: '40kmh.wav', refSpeed: 40, speedPoints: [[0,0],[30,.5],[40,1],[60,0]] },
-        { file: '60kmh.wav', refSpeed: 60, speedPoints: [[0,0],[40,0],[60,1]] }
+        // 5kmh.wav가 추가되면 자동으로 저속 구간에 사용한다. 파일이 아직 없으면 조용히 건너뛴다.
+        { file: '5kmh.wav', refSpeed: 5, optional: true, speedPoints: [[0,0],[1,.35],[5,1],[8,.5],[10,0]] },
+        { file: '10kmh.wav', refSpeed: 10, speedPoints: [[5,0],[10,1],[25,1],[30,.5],[40,0]] },
+        { file: '40kmh.wav', refSpeed: 40, speedPoints: [[30,0],[40,1],[60,0]] },
+        { file: '60kmh.wav', refSpeed: 60, speedPoints: [[40,0],[60,1]] }
       ]
     }
   };
@@ -86,7 +88,7 @@
         const gain=ctx.createGain();gain.gain.value=0;source.connect(gain);gain.connect(master);source.start();return{...s,source,gain};
       }));
       active=results.filter(x=>x.status==='fulfilled').map(x=>x.value);
-      const failed=results.filter(x=>x.status==='rejected');if(failed.length)console.warn('[BusAudio] 엔진 샘플 일부 로드 실패:',failed.map(x=>x.reason));
+      const failed=results.filter((x,i)=>x.status==='rejected'&&!p.samples[i].optional);if(failed.length)console.warn('[BusAudio] 엔진 샘플 일부 로드 실패:',failed.map(x=>x.reason));
       ready=active.length>0;if(!ready)throw new Error('엔진 샘플을 하나도 불러오지 못했습니다. 배포 경로와 Sound 폴더를 확인하세요.');
     })().finally(()=>{profileTask=null;});return profileTask;
   }
@@ -114,18 +116,15 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      // 전기버스 모터음은 가속 또는 제동 페달에 부하가 걸릴 때만 출력한다.
-      // 페달을 놓으면 빠르게 무음으로 전환하고, 속도에 따른 음정 변화는 약간 더 뚜렷하게 한다.
-      const pedal=Math.max(t,b);
+      // 가속 페달로 모터 부하가 걸릴 때만 소리 출력. 브레이크 입력은 모터음에 영향을 주지 않는다.
       for(const s of active){
         const speedWeight=curve(s.speedPoints,speed);
-        const hasLoad=pedal>=.02;
-        const target=hasLoad?clamp(Math.max(.06,speedWeight)*.42*pedal,0,.72):0;
+        const hasLoad=t>=.02;
+        const target=hasLoad?clamp(speedWeight*.42*t,0,.72):0;
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
-        const pedalPitch=1+t*.32-b*.21;
-        const pitch=clamp(Math.pow(speedRatio,.36)*pedalPitch,.68,1.34);
-        s.source.playbackRate.setTargetAtTime(pitch,now,.11);
-        s.gain.gain.setTargetAtTime(target,now,hasLoad?.09:.025);
+        const pitch=clamp(Math.pow(speedRatio,.32)*(.97+t*.08),.68,1.28);
+        s.source.playbackRate.setTargetAtTime(pitch,now,.16);
+        s.gain.gain.setTargetAtTime(target,now,hasLoad?.10:.035);
       }
       return;
     }

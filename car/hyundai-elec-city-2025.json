@@ -25,7 +25,7 @@
   "doorTime": 1.2,
   "gearAcc": [
     0,
-    1.25
+    1.65
   ],
   "brake": {
     "service": 2.0,
@@ -53,10 +53,7 @@
       "rearOpen": "effects/rear-open/D92_bdoor_opn.wav",
       "rearClose": "effects/rear-close/D92_bdoor_cls.wav",
       "parkingOn": "effects/parking/SD80_feststellbremse_ein.wav",
-      "parkingOff": "effects/parking/SD80_feststellbremse_aus.wav",
-      "retarderLoop": "effects/retarder/retarderfolyamat.wav",
-      "retarderOn": "effects/retarder/Retarder.wav",
-      "retarderOff": "effects/retarder/Retarder_aus.wav"
+      "parkingOff": "effects/parking/SD80_feststellbremse_aus.wav"
     }
   }
 }

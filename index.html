@@ -1580,8 +1580,9 @@
       const frac = Math.max(0, along) / gm;
       if (car.thr > 0.001) {
         if (along < gm) {
-          let tq = torque(frac);
-          if (!manual && frac < 0.5) tq = Math.max(tq, 0.85);
+          // 전기 구동은 출발 직후부터 높은 토크를 내도록 별도 곡선을 적용한다.
+          let tq = VEH.driveType === 'electric' ? 1 : torque(frac);
+          if (VEH.driveType !== 'electric' && !manual && frac < 0.5) tq = Math.max(tq, 0.85);
           car.v += dir * (g === -1 ? 0.9 : VEH.gearAcc[g]) * tq * car.thr * dt;
         }
       } else if (car.brk < 0.05 && car.emg < 0.05) {
