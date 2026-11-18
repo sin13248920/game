@@ -1624,7 +1624,7 @@
     if (engaged) rpmTarget = IDLE + (REDLINE - IDLE) * Math.min(1, Math.abs(car.v) / gm);
     else rpmTarget = IDLE + (REDLINE - IDLE) * car.thr * 0.85;
     car.rpm += (rpmTarget - car.rpm) * Math.min(1, dt * (engaged ? 10 : 6));
-    if (window.BusAudio) BusAudio.update(car.rpm, car.thr, dt, REDLINE, IDLE, Math.abs(car.v) * 3.6);
+    if (window.BusAudio) BusAudio.update(car.rpm, car.thr, dt, REDLINE, IDLE, Math.abs(car.v) * 3.6, Math.max(car.brk, car.emg));
 
     // 조향 (자전거 모델): 속도가 높을수록 조향각을 제한, 멈춰 있으면 회전 불가
     const av = Math.abs(car.v);

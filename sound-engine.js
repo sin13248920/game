@@ -109,19 +109,22 @@
       try{src.stop();src.disconnect();gain.disconnect();}catch(_){}
     }
   }
-  function update(rpm,throttle,dt,redline=2600,idle=650,speedKmh=0){
-    if(!ctx||!ready||suspended)return;const now=ctx.currentTime,r=Math.max(0,Number(rpm)||0),t=clamp(Number(throttle)||0,0,1);
+  function update(rpm,throttle,dt,redline=2600,idle=650,speedKmh=0,brake=0){
+    if(!ctx||!ready||suspended)return;const now=ctx.currentTime,r=Math.max(0,Number(rpm)||0),t=clamp(Number(throttle)||0,0,1),b=clamp(Number(brake)||0,0,1);
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
+      // 전기버스는 가속 또는 제동 입력이 있을 때만 모터음이 반응한다.
+      // 가속은 음정을 올리고, 제동은 회생제동 느낌으로 음정을 낮춘다.
+      const pedal=Math.max(t,b);
       for(const s of active){
-        const target=clamp(curve(s.speedPoints,speed)*.42,0,.72);
-        // 각 속도 샘플의 기준 속도에 맞춰 재생 속도를 바꿔 모터음의 음정을 자연스럽게 상승시킨다.
-        // 속도 비율을 완만하게 적용하고 가속 페달 입력을 소폭 반영해 급격한 음정 점프를 방지한다.
+        const speedWeight=curve(s.speedPoints,speed);
+        const target=pedal<.015?0:clamp(Math.max(.06,speedWeight)*.42*pedal,0,.72);
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
-        const pitch=clamp(Math.pow(speedRatio,.32)*(.97+t*.08),.68,1.28);
-        s.source.playbackRate.setTargetAtTime(pitch,now,.16);
-        s.gain.gain.setTargetAtTime(target,now,.12);
+        const pedalPitch=1+t*.30-b*.20;
+        const pitch=clamp(Math.pow(speedRatio,.32)*pedalPitch,.68,1.32);
+        s.source.playbackRate.setTargetAtTime(pitch,now,.13);
+        s.gain.gain.setTargetAtTime(target,now,.10);
       }
       return;
     }
