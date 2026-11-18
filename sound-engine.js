@@ -25,8 +25,6 @@
     'electric-speed': {
       base: 'E2/', mode: 'speed',
       samples: [
-        // 5kmh.wav는 이번 CFG에 항목이 없지만 제공된 저속 음원이라 저속 보조 레이어로 사용한다.
-        { file: '5kmh.wav', refSpeed: 5, level: 1, speedPoints: [[0,0],[1,.35],[5,1],[8,.5],[10,0]] },
         // CFG [loopsound] / [volcurve] 값 적용
         { file: '10kmh.wav', refSpeed: 30, level: .5, speedPoints: [[0,0],[5,.3],[7,.7],[40,1],[80,.2]] },
         { file: '40kmh.wav', refSpeed: 37.5, level: .4, speedPoints: [[0,0],[30,.3],[70,1]] },
