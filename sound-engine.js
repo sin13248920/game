@@ -25,9 +25,9 @@
     'electric-speed': {
       base: 'motor/', mode: 'speed',
       samples: [
-        { file: '10kmh.wav', speedPoints: [[0,0],[1,.4],[10,1],[25,1],[30,.5],[40,0]] },
-        { file: '40kmh.wav', speedPoints: [[0,0],[30,.5],[40,1],[60,0]] },
-        { file: '60kmh.wav', speedPoints: [[0,0],[40,0],[60,1]] }
+        { file: '10kmh.wav', refSpeed: 10, speedPoints: [[0,0],[1,.4],[10,1],[25,1],[30,.5],[40,0]] },
+        { file: '40kmh.wav', refSpeed: 40, speedPoints: [[0,0],[30,.5],[40,1],[60,0]] },
+        { file: '60kmh.wav', refSpeed: 60, speedPoints: [[0,0],[40,0],[60,1]] }
       ]
     }
   };
@@ -114,7 +114,15 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      for(const s of active){const target=clamp(curve(s.speedPoints,speed)*.42,0,.72);s.source.playbackRate.setTargetAtTime(1,now,.08);s.gain.gain.setTargetAtTime(target,now,.09);}
+      for(const s of active){
+        const target=clamp(curve(s.speedPoints,speed)*.42,0,.72);
+        // 각 속도 샘플의 기준 속도에 맞춰 재생 속도를 바꿔 모터음의 음정을 자연스럽게 상승시킨다.
+        // 속도 비율을 완만하게 적용하고 가속 페달 입력을 소폭 반영해 급격한 음정 점프를 방지한다.
+        const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
+        const pitch=clamp(Math.pow(speedRatio,.32)*(.97+t*.08),.68,1.28);
+        s.source.playbackRate.setTargetAtTime(pitch,now,.16);
+        s.gain.gain.setTargetAtTime(target,now,.12);
+      }
       return;
     }
     for(const s of active){const rw=Math.max(0,curve(s.points,r)),tw=s.throttle+(1-s.throttle)*t,target=clamp(rw*tw*.30,0,.72),rate=clamp(r/s.ref,.72,1.55);s.source.playbackRate.setTargetAtTime(rate,now,.08);s.gain.gain.setTargetAtTime(target,now,.09);}
