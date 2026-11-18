@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "descriptionFormat": "garage.kml Placemark 설명에 '운수사: 회사A, 회사B' 형식으로 기재하면 해당 차고지의 이용 운수사 목록에 합쳐 표시합니다.",
+  "depots": [
+    {
+      "id": "myeonmok",
+      "placemark": "북부운수",
+      "name": "북부운수 면목동 차고지",
+      "operators": [
+        "북부운수"
+      ],
+      "routes": [
+        "2211(회기역).kml",
+        "2211(면곡시장).kml"
+      ]
+    },
+    {
+      "id": "sinnae-shared",
+      "placemark": "중랑차고지",
+      "name": "중랑차고지 (신내동)",
+      "operators": [
+        "북부운수",
+        "대원 계열사",
+        "메트로버스"
+      ],
+      "routes": [
+        "2416.kml"
+      ]
+    }
+  ]
+}

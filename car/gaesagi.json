@@ -1,0 +1,67 @@
+{
+  "name": "개사기차",
+  "transmission": "auto",
+  "wheelbase": 4.0,
+  "maxSteer": 45,
+  "latLimit": 12.0,
+  "seats": 1,
+  "capacity": 1,
+  "gearLimit": [
+    0,
+    60,
+    120,
+    180,
+    240,
+    300
+  ],
+  "gearRec": [
+    null,
+    [0, 60],
+    [40, 120],
+    [80, 180],
+    [120, 240],
+    [180, 300]
+  ],
+  "reverseLimit": 60,
+  "idle": 650,
+  "redline": 6000,
+  "doorTime": 0.2,
+  "gearAcc": [
+    0,
+    3.5,
+    3.0,
+    2.5,
+    2.0,
+    1.8
+  ],
+  "brake": {
+    "service": 8.0,
+    "full": 15.0,
+    "airLag": 0.02,
+    "fullLag": 0.01
+  },
+  "retarder": {
+    "decel": [
+      0,
+      3.0,
+      6.0,
+      10.0
+    ]
+  },
+  "sound": {
+    "engine": "q290-euro4-5",
+    "folder": "aerocity-low",
+    "effects": {
+      "bell": "effects/bell/stop.wav",
+      "frontOpen": "effects/front-open/D92_fdoor_opn.wav",
+      "frontClose": "effects/front-close/D92_fdoor_cls.wav",
+      "rearOpen": "effects/rear-open/D92_bdoor_opn.wav",
+      "rearClose": "effects/rear-close/D92_bdoor_cls.wav",
+      "parkingOn": "effects/parking/SD80_feststellbremse_ein.wav",
+      "parkingOff": "effects/parking/SD80_feststellbremse_aus.wav",
+      "retarderLoop": "effects/retarder/retarderfolyamat.wav",
+      "retarderOn": "effects/retarder/Retarder.wav",
+      "retarderOff": "effects/retarder/Retarder_aus.wav"
+    }
+  }
+}

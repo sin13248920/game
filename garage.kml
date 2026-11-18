@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:ex="http://earth.google.com/kml/ext">
+<Document id="document">
+	<ex:extension>base64;CooBCoEBCn8KAggBEnkKdwokCiAKAwjQDxoHCNLtZRD_ASEAAAAAAADwPykAAAAAAAAAABgAEg8KCAitgO8HEP8BEKAfGAAaGgoHCP___wcQQBIICK2A7wcQ_wEYoB8gACgAIgkIARIFCP___wcqFwgBEggI____BxD_ARkAAAAAAADwPyAAEgQIARAA</ex:extension>
+	<name>garage</name>
+	<gx:CascadingStyle kml:id="__managed_style_0B33AC86DE431A051558_normal">
+		<ex:extension>base64;EgIYAQ</ex:extension>
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>2.66667</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+				<displayMode>hide</displayMode>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_0B33AC86DE431A051558_highlight">
+		<ex:extension>base64;EgIYAQ</ex:extension>
+		<Style>
+			<IconStyle>
+				<scale>1.2</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+				<displayMode>hide</displayMode>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_0B33AC86DE431A051558">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_0B33AC86DE431A051558_normal</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_0B33AC86DE431A051558_highlight</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark id="02337A79DB431A051527">
+		<name>북부운수</name>
+		<LookAt>
+			<longitude>127.0847610652076</longitude>
+			<latitude>37.57335112231101</latitude>
+			<altitude>28.03413497389083</altitude>
+			<heading>359.9999987868522</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>134.7078598149892</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0B33AC86DE431A051558</styleUrl>
+		<Point>
+			<coordinates>127.0847569057154,37.57316018609704,27.29299793212425</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="087B2C2E88431A059658">
+		<name>중랑차고지</name>
+		<LookAt>
+			<longitude>127.1040072090631</longitude>
+			<latitude>37.61407031587074</latitude>
+			<altitude>32.49982996530937</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>325.8884503772424</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0B33AC86DE431A051558</styleUrl>
+		<Point>
+			<coordinates>127.1046597546125,37.61415650154451,31.93597350050871</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>
