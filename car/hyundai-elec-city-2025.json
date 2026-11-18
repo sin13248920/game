@@ -48,10 +48,10 @@
     "effectsFolder": "aerocity-low",
     "effects": {
       "bell": "effects/bell/stop.wav",
-      "frontOpen": "effects/front-open/D92_fdoor_opn.wav",
-      "frontClose": "effects/front-close/D92_fdoor_cls.wav",
-      "rearOpen": "effects/rear-open/D92_bdoor_opn.wav",
-      "rearClose": "effects/rear-close/D92_bdoor_cls.wav",
+      "frontOpen": "effects/e2/front-open/FDoorO_14~.wav",
+      "frontClose": "effects/e2/front-close/FDoorC_14~.wav",
+      "rearOpen": "effects/e2/rear-open/bdoorOpen.wav",
+      "rearClose": "effects/e2/rear-close/bdoorClose.wav",
       "parkingOn": "effects/parking/SD80_feststellbremse_ein.wav",
       "parkingOff": "effects/parking/SD80_feststellbremse_aus.wav"
     }
