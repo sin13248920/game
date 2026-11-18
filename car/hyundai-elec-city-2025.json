@@ -47,7 +47,7 @@
     "engineFolder": "electric-city",
     "effectsFolder": "aerocity-low",
     "effects": {
-      "bell": "effects/bell/stop.wav",
+      "bell": "effects/e2/bell/stop(17~).wav",
       "frontOpen": "effects/e2/front-open/FDoorO_14~.wav",
       "frontClose": "effects/e2/front-close/FDoorC_14~.wav",
       "rearOpen": "effects/e2/rear-open/bdoorOpen.wav",
