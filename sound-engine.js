@@ -24,11 +24,13 @@
     },
     'electric-speed': {
       base: 'E2/', mode: 'speed',
-      // sound_E2.cfg 기준: Velocity 볼륨 곡선 및 loopsound 기준 속도/기본 음량
       samples: [
-        { file: '10kmh.wav', refSpeed: 30, level: 0.5, speedPoints: [[0,0],[5,0.3],[7,0.7],[40,1],[80,0.2]] },
-        { file: '40kmh.wav', refSpeed: 37.5, level: 0.4, speedPoints: [[0,0],[30,0.3],[70,1]] },
-        { file: '60kmh.wav', refSpeed: 42, level: 0.3, speedPoints: [[30,0],[80,1]] }
+        // 5kmh.wav는 이번 CFG에 항목이 없지만 제공된 저속 음원이라 저속 보조 레이어로 사용한다.
+        { file: '5kmh.wav', refSpeed: 5, level: 1, speedPoints: [[0,0],[1,.35],[5,1],[8,.5],[10,0]] },
+        // CFG [loopsound] / [volcurve] 값 적용
+        { file: '10kmh.wav', refSpeed: 30, level: .5, speedPoints: [[0,0],[5,.3],[7,.7],[40,1],[80,.2]] },
+        { file: '40kmh.wav', refSpeed: 37.5, level: .4, speedPoints: [[0,0],[30,.3],[70,1]] },
+        { file: '60kmh.wav', refSpeed: 42, level: .3, speedPoints: [[30,0],[80,1]] }
       ]
     }
   };
@@ -115,13 +117,15 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      // CFG의 Velocity 곡선을 그대로 적용한다. 페달 입력으로 임의 게이팅하지 않는다.
+      // CFG의 Velocity 기반 루프와 음량 곡선을 우선 적용한다.
+      // 페달 입력으로 음량을 강제 차단하지 않으며, 속도에 따라 자연스럽게 겹쳐진다.
       for(const s of active){
-        const velocityWeight=curve(s.speedPoints,speed);
-        const target=clamp(velocityWeight*(s.level||1),0,1.5);
-        const pitch=clamp(speed/(s.refSpeed||40),.01,1.8);
+        const speedWeight=curve(s.speedPoints,speed);
+        const target=clamp(speedWeight*(s.level||1),0,1);
+        const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
+        const pitch=clamp(speedRatio,.55,1.65);
         s.source.playbackRate.setTargetAtTime(pitch,now,.22);
-        s.gain.gain.setTargetAtTime(target,now,.18);
+        s.gain.gain.setTargetAtTime(target,now,.24);
       }
       return;
     }
