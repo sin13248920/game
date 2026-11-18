@@ -27,7 +27,7 @@
       samples: [
         // 5kmh.wav가 추가되면 자동으로 저속 구간에 사용한다. 파일이 아직 없으면 조용히 건너뛴다.
         { file: '5kmh.wav', refSpeed: 5, optional: true, speedPoints: [[0,0],[1,.35],[5,1],[8,.5],[10,0]] },
-        { file: '10kmh.wav', refSpeed: 10, speedPoints: [[5,0],[10,1],[25,1],[30,.5],[40,0]] },
+        { file: '10kmh.wav', refSpeed: 10, level: 4.2, speedPoints: [[5,0],[10,1],[25,1],[30,.5],[40,0]] },
         { file: '40kmh.wav', refSpeed: 40, speedPoints: [[30,0],[40,1],[60,0]] },
         { file: '60kmh.wav', refSpeed: 60, speedPoints: [[40,0],[60,1]] }
       ]
@@ -120,7 +120,7 @@
       for(const s of active){
         const speedWeight=curve(s.speedPoints,speed);
         const hasLoad=t>=.02;
-        const target=hasLoad?clamp(speedWeight*.42*t,0,.72):0;
+        const target=hasLoad?clamp(speedWeight*.42*t*(s.level||1),0,2.0):0;
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
         const pitch=clamp(Math.pow(speedRatio,.32)*(.97+t*.08),.68,1.28);
         s.source.playbackRate.setTargetAtTime(pitch,now,.16);
