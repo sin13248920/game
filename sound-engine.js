@@ -115,11 +115,11 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      // CFG의 Velocity 곡선을 기본으로 하고, 가속 페달 압력(throttle)에 비례해 모터 부하음을 키운다.
-      // 브레이크 입력은 모터음의 음정·음량에 개입시키지 않는다.
+      // CFG의 Velocity 기반 루프와 음량 곡선을 유지하면서 페달 부하를 반영한다.
+      // 관성 주행은 작게 유지하고, 가속·제동 페달 입력 시 모터음이 커진다.
+      const pedalLoad=clamp(.22 + t*.68 + b*.48,0,1.15);
       for(const s of active){
         const speedWeight=curve(s.speedPoints,speed);
-        const pedalLoad=clamp(t,0,1);
         const target=clamp(speedWeight*(s.level||1)*pedalLoad,0,1);
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
         const pitch=clamp(speedRatio,.55,1.65);
