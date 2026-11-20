@@ -292,7 +292,7 @@
       <b>W/↑</b> 가속 &nbsp; <b>S/↓</b> 브레이크·후진<br>
       <b>A/D, ←/→</b> 조향 &nbsp; <b>Space</b> 비상브레이크<br>
       <b>F</b> 앞문 &nbsp; <b>G</b> 뒷문 &nbsp; <b>P</b> 주차브레이크<br>
-      <div class="a-only"><b>R</b> 회생제동 단계 낮추기 &nbsp; <b>T</b> 높이기<br></div>
+      <div class="a-only"><b>E/Q</b> D·N·R 변속 &nbsp; <b>R/T</b> 회생제동 단계 조절<br></div>
       <div class="m-only"><b>Shift</b> 클러치 &nbsp; <b>E/Q</b> 기어 업/다운<br></div>
       <b>Z/X</b> 지도 확대/축소 &nbsp; <b>0/9</b> 카메라 기울기 낮춤/높임<br>
       <b>/</b> 정지화면
@@ -1155,12 +1155,24 @@
 
   // ───────── 변속 / 리타더 ─────────
   function shiftGear(d) {
-    if (VEH.transmission !== 'manual') return;
-    if (!keys.clutch) { toast('클러치(Shift)를 누른 채 변속하세요'); return; }
-    const seq = [-1, 0, ...Array.from({ length: MAXG }, (_, i) => i + 1)];   // R, N, 1~MAXG단
-    const i = clamp(seq.indexOf(car.gear) + d, 0, seq.length - 1);
-    if (seq[i] === -1 && Math.abs(car.v) > 2) { toast('정지한 뒤에 후진 기어를 넣으세요'); return; }
-    car.gear = seq[i];
+    if (VEH.transmission === 'manual') {
+      if (!keys.clutch) { toast('클러치(Shift)를 누른 채 변속하세요'); return; }
+      const seq = [-1, 0, ...Array.from({ length: MAXG }, (_, i) => i + 1)]; // R, N, 1~MAXG단
+      const i = clamp(seq.indexOf(car.gear) + d, 0, seq.length - 1);
+      if (seq[i] === -1 && Math.abs(car.v) > 0.5) { toast('정지한 뒤에 후진 기어를 넣으세요'); return; }
+      car.gear = seq[i];
+      return;
+    }
+    // 자동변속 선택 순서: D ↔ N ↔ R. E는 R 방향, Q는 D 방향으로 이동.
+    const seq = [1, 0, -1];
+    const i = seq.indexOf(car.gear);
+    const next = seq[clamp((i < 0 ? 0 : i) + d, 0, seq.length - 1)];
+    if (next !== car.gear && Math.abs(car.v) > 0.5) {
+      toast('D·N·R 변속은 완전히 정차한 뒤에 해주세요');
+      return;
+    }
+    car.gear = next;
+    toast(next === 1 ? 'D · 주행' : next === 0 ? 'N · 중립' : 'R · 후진');
   }
   function retarderBy(d) {
     if (!VEH.retarder) { toast('이 버스에는 회생제동 기능이 없어요'); return; }
@@ -1242,7 +1254,7 @@
     trailPts = []; setTrail([]);
     dangerTime = 0;
     moveMapCamera([START.lng, START.lat], S.zoom, START.heading);
-    if (VEH.transmission === 'manual') toast('중립(N) 상태예요. Shift를 누른 채 E로 1단을 넣으세요');
+    if (VEH.transmission === 'manual') toast('중립(N) 상태예요. Shift를 누른 채 E로 1단을 넣으세요'); else toast('D · 주행 상태예요. E/Q로 D·N·R을 선택하세요');
   }
   $('reset').addEventListener('click', e => { resetAll(); e.currentTarget.blur(); });
   $('pause-resume').addEventListener('click', e => { setPause(false); e.currentTarget.blur(); });
@@ -1548,15 +1560,9 @@
       throttleIn = keys.up ? 1 : 0;
       brakeIn = keys.down ? 1 : 0;
     } else {
-      if (car.gear >= 1 && keys.down && !keys.up && car.v < 0.4) car.gear = -1;
-      else if (car.gear === -1 && keys.up && !keys.down && car.v > -0.4) car.gear = 1;
-      if (car.gear === -1) { throttleIn = keys.down ? 1 : 0; brakeIn = keys.up ? 1 : 0; }
-      else { throttleIn = keys.up ? 1 : 0; brakeIn = keys.down ? 1 : 0; }
-      if (car.gear >= 1) {
-        const kmh = car.v * 3.6;
-        if (car.gear < MAXG && kmh > VEH.gearRec[car.gear][1]) car.gear++;
-        else if (car.gear > 1 && kmh < VEH.gearRec[car.gear][0] - 3) car.gear--;
-      }
+      // 자동변속 차량은 D/N/R 선택식. 가속·브레이크 페달의 역할은 기어와 무관하게 고정한다.
+      throttleIn = keys.up ? 1 : 0;
+      brakeIn = keys.down ? 1 : 0;
     }
     // 인터록: 문이 열려 있거나 주차 브레이크가 걸려 있으면 출발 불가
     if (throttleIn > 0 && (!doorsClosed() || car.park)) {

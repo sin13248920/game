@@ -115,15 +115,16 @@
     const profile=PROFILES[profileId];
     if(profile&&profile.mode==='speed'){
       const speed=Math.abs(Number(speedKmh)||0);
-      // CFG의 Velocity 기반 루프와 음량 곡선을 우선 적용한다.
-      // 페달 입력으로 음량을 강제 차단하지 않으며, 속도에 따라 자연스럽게 겹쳐진다.
+      // CFG의 Velocity 곡선을 기본으로 하고, 가속 페달 압력(throttle)에 비례해 모터 부하음을 키운다.
+      // 브레이크 입력은 모터음의 음정·음량에 개입시키지 않는다.
       for(const s of active){
         const speedWeight=curve(s.speedPoints,speed);
-        const target=clamp(speedWeight*(s.level||1),0,1);
+        const pedalLoad=clamp(t,0,1);
+        const target=clamp(speedWeight*(s.level||1)*pedalLoad,0,1);
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
         const pitch=clamp(speedRatio,.55,1.65);
         s.source.playbackRate.setTargetAtTime(pitch,now,.22);
-        s.gain.gain.setTargetAtTime(target,now,.24);
+        s.gain.gain.setTargetAtTime(target,now,.18);
       }
       return;
     }
