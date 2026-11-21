@@ -26,7 +26,7 @@
       base: 'E2/', mode: 'speed',
       samples: [
         // sound_E2.cfg [loopsound] / [volcurve] 값 적용 (Velocity 기준)
-        { file: 'idle.wav', type: 'idle', level: .15, speedPoints: [[0,1],[3,1],[6,.6],[12,0]] },
+        { file: 'idle.wav', type: 'idle', level: .05, speedPoints: [[0,1],[3,1],[6,.6],[12,0]] },
         { file: '10kmh.wav', refSpeed: 30, level: .5, speedPoints: [[0,0],[5,.3],[7,.7],[40,1],[80,.2]] },
         { file: '40kmh.wav', refSpeed: 37.5, level: .4, speedPoints: [[0,0],[30,.3],[70,1]] },
         { file: '60kmh.wav', refSpeed: 42, level: .3, speedPoints: [[30,0],[80,1]] },
