@@ -22,6 +22,18 @@
         { file: 'GE11Vmid.22k.wav', ref: 2000, points: [[700,0],[1200,0],[1900,1],[3000,1]], throttle: .5 }
       ]
     },
+    'kgm-e-speed': {
+      base: 'E2/', mode: 'speed',
+      samples: [
+        // sound_E2.cfg [loopsound] / [volcurve] 값 적용 (Velocity 기준)
+        { file: 'idle.wav', type: 'idle', level: .5, speedPoints: [[0,1],[3,1],[6,.6],[12,0]] },
+        { file: '10kmh.wav', refSpeed: 30, level: .5, speedPoints: [[0,0],[5,.3],[7,.7],[40,1],[80,.2]] },
+        { file: '40kmh.wav', refSpeed: 37.5, level: .4, speedPoints: [[0,0],[30,.3],[70,1]] },
+        { file: '60kmh.wav', refSpeed: 42, level: .3, speedPoints: [[30,0],[80,1]] },
+        // 가상엔진음(VESS): 5~19km/h 구간에서만 울리고 15km/h에서 최대
+        { file: 'vess.wav', type: 'vess', level: .16, speedPoints: [[0,0],[4,0],[5,0],[13,1],[15,3],[19,0]], pitchPoints: [[0,.8],[19,1.25]] }
+      ]
+    },
     'electric-speed': {
       base: 'E2/', mode: 'speed',
       samples: [
@@ -119,6 +131,16 @@
       // 관성 주행은 작게 유지하고, 가속·제동 페달 입력 시 모터음이 커진다.
       const pedalLoad=clamp(.22 + t*.68 + b*.48,0,1.15);
       for(const s of active){
+        if(s.type==='idle'){
+          s.source.playbackRate.setTargetAtTime(1,now,.2);
+          s.gain.gain.setTargetAtTime(clamp(curve(s.speedPoints,speed)*(s.level||1)*(.7+.3*t),0,1),now,.25);
+          continue;
+        }
+        if(s.type==='vess'){
+          s.source.playbackRate.setTargetAtTime(clamp(curve(s.pitchPoints,speed),.5,1.6),now,.15);
+          s.gain.gain.setTargetAtTime(clamp(curve(s.speedPoints,speed)*(s.level||1),0,.72),now,.12);
+          continue;
+        }
         const speedWeight=curve(s.speedPoints,speed);
         const target=clamp(speedWeight*(s.level||1)*pedalLoad,0,1);
         const speedRatio=Math.max(.01,speed/(s.refSpeed||40));
